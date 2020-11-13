@@ -24,8 +24,8 @@ from _constants import *
 Tk().withdraw()
 
 class Buttons:
-    buttonLoadPgn = ButtonText((1000, 50), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load PGN", 1, BLACK), border=3, borderCol=WHITE)
-    buttonLoadEngine = ButtonText((1000, 300), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load Engine", 1, BLACK), border=3, borderCol=WHITE)
+    buttonLoadPgn = ButtonText((900, 50), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load PGN", 1, BLACK), border=3, borderCol=WHITE)
+    buttonLoadEngine = ButtonText((900, 300), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load Engine", 1, BLACK), border=3, borderCol=WHITE)
 
     pgnPath = ""
     enginePath = ""
@@ -33,6 +33,11 @@ class Buttons:
     def Draw(self, window, events):
         self.buttonLoadPgn.Draw(window, events)
         self.buttonLoadEngine.Draw(window, events)
+
+        pgnText = FONT_SMALL.render(self.pgnPath, 1, WHITE)
+        engineText = FONT_SMALL.render(self.enginePath, 1, WHITE)
+        window.blit(pgnText, (900, 150))
+        window.blit(engineText, (900, 400))
 
         if self.buttonLoadPgn.clicked:
             self.pgnPath = askopenfilename()
