@@ -17,15 +17,27 @@
 
 import pygame
 import chess
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 from pumpkinpy.pygameutils.elements import ButtonText
 from _constants import *
-
+Tk().withdraw()
 
 class Buttons:
     buttonLoadPgn = ButtonText((1000, 50), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load PGN", 1, BLACK), border=3, borderCol=WHITE)
+    buttonLoadEngine = ButtonText((1000, 300), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load Engine", 1, BLACK), border=3, borderCol=WHITE)
+
+    pgnPath = ""
+    enginePath = ""
 
     def Draw(self, window, events):
         self.buttonLoadPgn.Draw(window, events)
+        self.buttonLoadEngine.Draw(window, events)
+
+        if self.buttonLoadPgn.clicked:
+            self.pgnPath = askopenfilename()
+        if self.buttonLoadEngine.clicked:
+            self.enginePath = askopenfilename()
 
 
 class Board:
