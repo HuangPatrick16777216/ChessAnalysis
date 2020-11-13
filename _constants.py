@@ -17,6 +17,7 @@
 
 import os
 import pygame
+pygame.init()
 
 
 SCREEN = (1600, 900)
@@ -25,8 +26,11 @@ PARENT = os.path.realpath(os.path.dirname(__file__))
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+CYAN = (100, 175, 255)
 BOARD_WHITE = (255, 255, 230)
 BOARD_BLACK = (100, 150, 80)
+
+FONT_SMALL = pygame.font.SysFont("comicsans", 24)
 
 IMAGES = {}
 for img in os.listdir(os.path.join(PARENT, "images")):
