@@ -17,7 +17,7 @@
 
 import pygame
 from _constants import *
-from _gui import Board
+from _gui import Board, Buttons
 
 
 def Main():
@@ -28,6 +28,7 @@ def Main():
 
     clock = pygame.time.Clock()
     board = Board()
+    buttons = Buttons()
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -39,6 +40,7 @@ def Main():
 
         WINDOW.fill(BLACK)
         board.Draw(WINDOW)
+        buttons.Draw(WINDOW, events)
 
 
 Main()
