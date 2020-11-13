@@ -17,7 +17,15 @@
 
 import pygame
 import chess
+from pumpkinpy.pygameutils.elements import ButtonText
 from _constants import *
+
+
+class Buttons:
+    buttonLoadPgn = ButtonText((1000, 50), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load PGN", 1, BLACK), border=3, borderCol=WHITE)
+
+    def Draw(self, window, events):
+        self.buttonLoadPgn.Draw(window, events)
 
 
 class Board:
