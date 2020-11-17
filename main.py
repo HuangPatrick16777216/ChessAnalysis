@@ -39,8 +39,8 @@ def Main():
                 return
 
         WINDOW.fill(BLACK)
-        board.Draw(WINDOW)
-        buttons.Draw(WINDOW, events)
+        board.Draw(WINDOW, events)
+        buttons.Draw(WINDOW, events, board)
 
 
 Main()
