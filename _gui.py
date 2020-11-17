@@ -17,6 +17,7 @@
 
 import pygame
 import chess
+import chess.pgn
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from pumpkinpy.pygameutils.elements import ButtonText, TextInput
@@ -31,7 +32,7 @@ class Buttons:
     pgnPath = ""
     enginePath = ""
 
-    def Draw(self, window, events):
+    def Draw(self, window, events, board):
         self.buttonLoadPgn.Draw(window, events)
         self.buttonLoadEngine.Draw(window, events)
         self.inputAnalysisDepth.Draw(window, events)
@@ -43,6 +44,7 @@ class Buttons:
 
         if self.buttonLoadPgn.clicked:
             self.pgnPath = askopenfilename()
+            board.LoadPgn(self.pgnPath)
         if self.buttonLoadEngine.clicked:
             self.enginePath = askopenfilename()
 
@@ -53,10 +55,26 @@ class Board:
     
     def __init__(self):
         self.board = chess.Board()
+        self.moves = []
+        self.currMove = 0
 
-    def Draw(self, window):
+    def LoadPgn(self, path):
+        if path == "":
+            return
+
+        with open(path, "r") as file:
+            game = chess.pgn.read_game(file)
+            self.moves = list(game.mainline_moves())
+
+    def UpdateBoard(self):
+        self.board = chess.Board()
+        for move in self.moves[:self.currMove]:
+            self.board.push(move)
+
+    def Draw(self, window, events):
         self.DrawSquares(window)
         self.DrawPieces(window)
+        self.Update(events)
 
     def DrawSquares(self, window):
         for row in range(8):
@@ -80,3 +98,13 @@ class Board:
                     img = IMAGES[symbol]
                     loc = (self.sqSize*col + self.location[0] + 5, self.sqSize*row + self.location[1] + 5)
                     window.blit(img, loc)
+
+    def Update(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.currMove = max(self.currMove-1, 0)
+                    self.UpdateBoard()
+                elif event.key == pygame.K_RIGHT:
+                    self.currMove = min(self.currMove+1, len(self.moves))
+                    self.UpdateBoard()
