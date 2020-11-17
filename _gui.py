@@ -19,13 +19,14 @@ import pygame
 import chess
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
-from pumpkinpy.pygameutils.elements import ButtonText
+from pumpkinpy.pygameutils.elements import ButtonText, TextInput
 from _constants import *
 Tk().withdraw()
 
 class Buttons:
     buttonLoadPgn = ButtonText((900, 50), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load PGN", 1, BLACK), border=3, borderCol=WHITE)
-    buttonLoadEngine = ButtonText((900, 300), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load Engine", 1, BLACK), border=3, borderCol=WHITE)
+    buttonLoadEngine = ButtonText((900, 200), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load Engine", 1, BLACK), border=3, borderCol=WHITE)
+    inputAnalysisDepth = TextInput((900, 350), (200, 50), WHITE, 3, WHITE, label="Depth", font=FONT_SMALL)
 
     pgnPath = ""
     enginePath = ""
@@ -33,11 +34,12 @@ class Buttons:
     def Draw(self, window, events):
         self.buttonLoadPgn.Draw(window, events)
         self.buttonLoadEngine.Draw(window, events)
+        self.inputAnalysisDepth.Draw(window, events)
 
         pgnText = FONT_SMALL.render(self.pgnPath, 1, WHITE)
         engineText = FONT_SMALL.render(self.enginePath, 1, WHITE)
-        window.blit(pgnText, (900, 150))
-        window.blit(engineText, (900, 400))
+        window.blit(pgnText, (900, 125))
+        window.blit(engineText, (900, 275))
 
         if self.buttonLoadPgn.clicked:
             self.pgnPath = askopenfilename()
