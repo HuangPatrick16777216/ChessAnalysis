@@ -16,8 +16,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import pygame
+import threading
 import chess
 import chess.pgn
+import chess.engine
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from pumpkinpy.pygameutils.elements import ButtonText, TextInput
@@ -28,14 +30,25 @@ class Buttons:
     buttonLoadPgn = ButtonText((900, 50), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load PGN", 1, BLACK), border=3, borderCol=WHITE)
     buttonLoadEngine = ButtonText((900, 200), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Load Engine", 1, BLACK), border=3, borderCol=WHITE)
     inputAnalysisDepth = TextInput((900, 350), (200, 50), WHITE, 3, WHITE, label="Depth", font=FONT_SMALL)
+    buttonAnalyse = ButtonText((900, 500), (200, 50), WHITE, CYAN, BLACK, FONT_SMALL.render("Analyse", 1, BLACK), border=3, borderCol=WHITE)
 
     pgnPath = ""
     enginePath = ""
+    analysing = False
 
     def Draw(self, window, events, board):
+        if self.analysing:
+            progress = board.analyseCurrMove / len(board.moves)
+            self.analysing = board.analysing
+            
+            pygame.draw.rect(window, CYAN, (900, 100, 500*progress, 50))
+            pygame.draw.rect(window, WHITE, (900, 100, 500, 50), 2)
+            return
+
         self.buttonLoadPgn.Draw(window, events)
         self.buttonLoadEngine.Draw(window, events)
         self.inputAnalysisDepth.Draw(window, events)
+        self.buttonAnalyse.Draw(window, events)
 
         pgnText = FONT_SMALL.render(self.pgnPath, 1, WHITE)
         engineText = FONT_SMALL.render(self.enginePath, 1, WHITE)
@@ -47,6 +60,9 @@ class Buttons:
             board.LoadPgn(self.pgnPath)
         if self.buttonLoadEngine.clicked:
             self.enginePath = askopenfilename()
+        if self.buttonAnalyse.clicked:
+            self.analysing = True
+            threading.Thread(target=board.Analyse, args=(self.enginePath, int(self.inputAnalysisDepth.text))).start()
 
 
 class Board:
@@ -57,6 +73,8 @@ class Board:
         self.board = chess.Board()
         self.moves = []
         self.currMove = 0
+        self.analyseCurrMove = 0
+        self.analysing = False
 
     def LoadPgn(self, path):
         if path == "":
@@ -108,3 +126,19 @@ class Board:
                 elif event.key == pygame.K_RIGHT:
                     self.currMove = min(self.currMove+1, len(self.moves))
                     self.UpdateBoard()
+
+    def Analyse(self, enginePath, depth):
+        if enginePath == "":
+            return
+
+        self.analysing = True
+        self.analyseCurrMove = 0
+        engine = chess.engine.SimpleEngine.popen_uci(enginePath)
+        board = chess.Board()
+        self.evals = [0]
+        for i, move in enumerate(self.moves):
+            board.push(move)
+            self.analyseCurrMove = i + 1
+            score = engine.analyse(board, chess.engine.Limit(depth=depth))["score"].pov(chess.WHITE)
+            self.evals.append(score)
+        self.analysing = False
